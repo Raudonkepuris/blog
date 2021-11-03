@@ -3,6 +3,8 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Illuminate\Database\Eloquent\Factories\Factory;
+
 
 class DatabaseSeeder extends Seeder
 {
@@ -13,6 +15,27 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        // \App\Models\User::factory(10)->create();
+        for($x = 0; $x <= 20; $x++){
+        $i = random_int(1, 4);
+        \App\Models\Post::factory()->
+            has(\App\Models\Tag::factory()->count(3))->
+            hasComments($i)->
+            create();
+        }
+
+        for ($x = 0; $x <= 20; $x++) {
+        $post = \App\Models\Post::all()->random();
+        $comment = \App\Models\Comment::all()->where('commentable_id', $post->id)
+            ->where('commentable_type', 'App\Models\Post')
+            ->random();
+
+        \App\Models\Comment::factory()->
+            state([
+                'commentable_id' => $post->id,
+                'parent_id' => $comment->id,
+                'commentable_type' => 'App\Models\Comment',
+            ])->
+            create();
+        }
     }
 }
