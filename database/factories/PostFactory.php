@@ -15,7 +15,7 @@ class PostFactory extends Factory
     {
         return [
             'title' => $this->faker->words(4, true),
-            'content' => $this->faker->paragraphs(5),
+            'content' => $this->faker->sentence(),
             'upvotes' => $this->faker->numberBetween(0, 400),
             'downvotes' => $this->faker->numberBetween(0, 400),
         ];
