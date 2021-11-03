@@ -9,6 +9,10 @@ class Comment extends Model
 {
     use HasFactory;
 
+    protected $attributes = [
+        'parent_id' => NULL,
+    ];
+
     public function commentable(){
         return $this->morphTo();
     }
