@@ -26,14 +26,14 @@ class DatabaseSeeder extends Seeder
         for ($x = 0; $x <= 20; $x++) {
         $post = \App\Models\Post::all()->random();
         $comment = \App\Models\Comment::all()->where('commentable_id', $post->id)
-            ->where('commentable_type', 'App\Models\Post')
+            ->where('parent_id', NULL)
             ->random();
 
         \App\Models\Comment::factory()->
             state([
                 'commentable_id' => $post->id,
                 'parent_id' => $comment->id,
-                'commentable_type' => 'App\Models\Comment',
+                'commentable_type' => 'App\Models\Post',
             ])->
             create();
         }

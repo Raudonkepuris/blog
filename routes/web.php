@@ -1,7 +1,9 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
+use App\Models\Post;
+use App\Http\Controllers\PostController;
+use App\Http\Controllers\CommentController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -14,5 +16,11 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
-});
+    $post = Post::all()->random();
+    return view('index', compact('post'));
+})->name('home');
+
+Route::resource('posts', PostController::class);
+Route::resource('comments', CommentController::class);
+
+Auth::routes(['register'=>false]);
