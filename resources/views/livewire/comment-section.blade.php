@@ -19,15 +19,16 @@
 
             <div class="row">
                 @if (session()->has('message'))
-
                 <div class="alert alert-success">
-
                     {{ session('message') }}
-
                 </div>
-
+                @elseif (session()->has('deleted'))
+                <div class="alert alert-danger">
+                    {{ session('deleted') }}
+                </div>
                 @endif
             </div>
+            
 
             <div class="row">
                 <form wire:submit.prevent="submit" style="width: 100%">
@@ -42,7 +43,7 @@
                 </form>
             </div>
 
-            @foreach ($comments->where('parent_id', NULL) as $comment)
+            @foreach ($comments as $comment)
             <div class="row pb-2">
                 <div class="col">
                     <div class="row border p-1">
@@ -50,6 +51,9 @@
                             <div class="row justify-content-between">
                                 <div class="col p-0">
                                     <b>{{ $comment->name }}</b>
+                                    @if (in_array($comment->id, $this->hidden_ids) == true ? 'd-none' : '' )
+                                    {{ $comment->id }}
+                                    @endif
                                 </div>
                                 <div class="col p-0 text-align-end">
                                     <p class="text-right">Posted {{ $comment->updated_at->diffforhumans() }}</p>
@@ -66,8 +70,8 @@
 
                                 @if (session('comments') != NULL || Gate::allows('delete_comments'))
                                 @if (Gate::allows('delete_comments') || in_array($comment->id, session('comments')))
-                                <button type="button" wire:click="delete({{ $comment->id }})"
-                                    class="btn btn-link p-0 mx-2 text-danger">Delete</button>
+                                    <button type="button" wire:click="deleteId({{ $comment->id }})" 
+                                        class="btn btn-link text-danger" data-toggle="modal" data-target="#commentModal">Delete</button>
                                 @endif
                                 @endif
 
@@ -92,10 +96,27 @@
                     </div>
                     @endif
                     @endif
+                    
+                    @if (array_key_exists($comment->id,$hidden_ids))
+                        <div class="row {{ $hidden_ids[$comment->id] == 0 ? 'd-none' : '' }}">
+                            <button type="button" wire:click="showLessReplies({{ $comment->id }})"
+                                class="btn btn-link p-0 mx-2">Show less replies</button>
+                        </div>
+                    @endif
 
-                    @foreach ($comments->where('parent_id', $comment->id)->sortByDesc('created_at') as $reply)
+                    @php
+                    $i = 0
+                    @endphp
+                    @foreach ($replies->where('parent_id', $comment->id) as $reply)
 
-                    <div class="row">
+
+                    @if (array_key_exists($comment->id,$hidden_ids))
+                    @php
+                    if ($i >= $hidden_ids[$comment->id]) break;
+                    $i++;
+                    @endphp
+@endif
+                    <div class="row {{ array_key_exists($comment->id,$hidden_ids) && $hidden_ids[$comment->id] == 0 ? 'd-none' : '' }}">
                         <div class="col-1">
 
                         </div>
@@ -103,6 +124,7 @@
                             <div class="row border p-1">
                                 <div class="col">
                                     <div class="row justify-content-between">
+
                                         <div class="col p-0">
                                             <b>{{ $reply->name }}</b>
                                         </div>
@@ -117,9 +139,10 @@
                                     </div>
                                     <div class="row">
                                         @if (session('comments') != NULL || Gate::allows('delete_comments'))
-                                        @if (Gate::allows('delete_comments') || in_array($reply->id, session('comments')))
-                                        <button type="button" wire:click="delete({{ $reply->id }})"
-                                            class="btn btn-link p-0 mx-2 text-danger">Delete</button>
+                                        @if (Gate::allows('delete_comments') || in_array($reply->id,
+                                        session('comments')))
+                                            <button type="button" wire:click="deleteId({{ $reply->id }})" 
+                                             class="btn btn-link text-danger" data-toggle="modal" data-target="#commentModal">Delete</button>
                                         @endif
                                         @endif
                                     </div>
@@ -127,11 +150,43 @@
                             </div>
                         </div>
                     </div>
-
                     @endforeach
+                    @if (array_key_exists($comment->id,$hidden_ids))
+                    <div class="row {{ $hidden_ids[$comment->id] < $comment->replies->count() ? '' : 'd-none' }}">
+                        <button type="button" wire:click="showMoreReplies({{ $comment->id }})"
+                            class="btn btn-link p-0 mx-2">Show more replies
+                            ({{ $comment->replies->count()-$hidden_ids[$comment->id] }})</button>
+                    </div>
+                    @endif
                 </div>
             </div>
             @endforeach
+            <div class="row justify-content-center">
+                {{ $comments->links('vendor.pagination.livewire') }}
+            </div>
         </div>
     </div>
+
+    <div wire:ignore.self class="modal fade" id="commentModal" tabindex="-1" role="dialog" aria-labelledby="commentModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="commentModalLabel">Delete Confirm</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                         <span aria-hidden="true close-btn">×</span>
+                    </button>
+                </div>
+
+               <div class="modal-body">
+                    <p>Are you sure want to delete this comment?</p>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary close-btn" data-dismiss="modal">Close</button>
+                    <button type="button" wire:click.prevent="delete()" class="btn btn-danger close-modal" data-dismiss="modal">Yes, Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>

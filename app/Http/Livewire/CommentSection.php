@@ -5,22 +5,58 @@ namespace App\Http\Livewire;
 use Livewire\Component;
 use app\Models\Comment;
 use Illuminate\Support\Facades\Gate;
+use Livewire\WithPagination;
+use Illuminate\Support\Facades\DB;
 
 class CommentSection extends Component
 {
+    use WithPagination;
+
     public $errors;
-    public $comments;
     public $post;
     public $content, $name;
     public $reply_ids=[];
+    public $deleteId;
+    public $replies;
+    public $hidden_ids=[];
+
+    public function paginationView()
+    {
+        return 'vendor.pagination.livewire';
+    }
 
     protected $rules = [
         'name' => 'max:80',
         'content' => 'required|max:65535',
     ];
 
-    protected $listeners = ['commentAdded' => 'render',
-                            'commentDeleted' => 'render'];
+    public function mount()
+    {
+        $this->checkHidden();
+    }
+
+    public function checkHidden()
+    {
+        foreach($this->post->comments as $comment){
+            if($comment->replies->count() > 5){
+                $this->hidden_ids[$comment->id] = 0;
+            }
+        }
+    }
+
+    public function showMoreReplies($id)
+    {   
+        if($this->hidden_ids[$id] < $this->post->comments->where('id', $id)->first()->replies->count()){
+            $this->hidden_ids[$id] += 5;
+        }
+    }
+
+    public function showLessReplies($id)
+    {
+        if($this->hidden_ids[$id] != 0){
+            $this->hidden_ids[$id] -= 5;
+        }
+    }
 
     public function submit($parent_id = null)
     {
@@ -40,8 +76,6 @@ class CommentSection extends Component
         session()->flash('message', 'Comment posted.');
 
         $this->content = "";
-
-        $this->emit('commentAdded');
     }
 
     public function openReplyField($id)
@@ -53,11 +87,16 @@ class CommentSection extends Component
         }
     }
 
-    public function delete($id)
+    public function deleteId($id)
     {
-        if(Gate::allows('delete_comments') || in_array($id, session('comments')))
+        $this->deleteId = $id;
+    }
+
+    public function delete()
+    {
+        if(Gate::allows('delete_comments') || in_array($this->deleteId, session('comments')))
         {
-            $comment = $this->comments->find($id);
+            $comment = Comment::find($this->deleteId);
 
             if($comment != NULL)
             {
@@ -65,14 +104,17 @@ class CommentSection extends Component
                 $comment->delete();
             } 
 
-            $this->emit('commentDeleted');
+            session()->flash('deleted', 'Comment deleted.');
         }
     }
 
     public function render()
     {
-        $this->comments = $this->post->comments->sortByDesc('created_at');
+        
+        $this->replies = $this->post->replies;
 
-        return view('livewire.comment-section');
+        return view('livewire.comment-section',[ 
+            'comments' => Comment::where('commentable_id', $this->post->id)->whereNull('parent_id')->orderByDesc('created_at')->paginate(5),
+        ]);
     }
 }
