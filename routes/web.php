@@ -21,6 +21,7 @@ Route::get('/', function () {
 })->name('home');
 
 Route::resource('posts', PostController::class);
+Route::get('posts', [PostController::class, 'index'])->name('posts.index');
 Route::resource('comments', CommentController::class);
 
 Auth::routes(['register'=>false]);

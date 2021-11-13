@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Post;
+use App\Models\Tag;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
 
 class PostController extends Controller
 {
@@ -12,11 +15,34 @@ class PostController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $posts = Post::all();
+        // dd(request()->all());
 
-        return view('posts.index', compact('posts'));
+        // if(request()->has("tags")){ 
+        //     dd(request()->only("tags")); 
+        // }
+
+         $tags = Tag::all()->where('display');
+
+        // if($request->tag){
+        //     $posts = Post::whereHas('tags', function(Builder $query) use($request) {
+        //         $query->where('tags.id', $request->tag);
+        //     })->paginate(5);
+        // }else{
+        //     $posts = Post::paginate(10);
+        // }
+
+        $posts = Post::when($request->has("tags"), function($query) use($request) {
+            $query->whereHas('tags', function(Builder $query) use($request) {
+                          $query->whereIn('tags.name', $request->tags);
+                      });
+        })->paginate(10);
+
+        return view('posts.index', [
+            'tags' => $tags,
+            'posts' => $posts
+        ]);
     }
 
     /**
@@ -26,7 +52,7 @@ class PostController extends Controller
      */
     public function create()
     {
-        $this->authorize('create_posts');
+        $this->authorize('create', Post::class);
 
         return view('posts.create');
     }
@@ -39,7 +65,7 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
-        $this->authorize('create_posts');
+        $this->authorize('create', Post::class);
     }
 
     /**
@@ -64,7 +90,7 @@ class PostController extends Controller
      */
     public function edit($id)
     {
-        $this->authorize('edit_posts');
+        $this->authorize('update', Post::find($id));
 
         return view('posts.edit');
     }
@@ -78,7 +104,7 @@ class PostController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $this->authorize('edit_posts');
+        $this->authorize('update', Post::find($id));
     }
 
     /**
@@ -89,6 +115,8 @@ class PostController extends Controller
      */
     public function destroy($id)
     {
-        $this->authorize('delete_posts');
+        $this->authorize('delete', Post::find($id));
+
+        
     }
 }
