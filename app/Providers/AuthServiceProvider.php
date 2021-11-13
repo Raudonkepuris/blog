@@ -15,7 +15,7 @@ class AuthServiceProvider extends ServiceProvider
      * @var array
      */
     protected $policies = [
-        // 'App\Models\Model' => 'App\Policies\ModelPolicy',
+        'App\Models\Post' => 'App\Policies\PostPolicy',
     ];
 
     /**
@@ -28,10 +28,6 @@ class AuthServiceProvider extends ServiceProvider
         $this->registerPolicies();
 
         Gate::define('create_users', fn(User $user) => $user->roles->contains(1));
-        
-        Gate::define('create_posts', fn(User $user) => $user->roles->contains(1));
-        Gate::define('edit_posts', fn(User $user) => $user->roles->contains(1));
-        Gate::define('delete_posts', fn(User $user) => $user->roles->contains(1));
 
         Gate::define('delete_comments', fn(User $user) => $user->roles->contains(1));
     }
