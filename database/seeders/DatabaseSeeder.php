@@ -15,15 +15,15 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        for($x = 0; $x <= 20; $x++){
-        $i = random_int(1, 4);
+        for($x = 0; $x <= 5; $x++){
+        $i = random_int(1, 20);
         \App\Models\Post::factory()->
             has(\App\Models\Tag::factory()->count(3))->
             hasComments($i)->
             create();
         }
 
-        for ($x = 0; $x <= 20; $x++) {
+        for ($x = 0; $x <= 100; $x++) {
         $post = \App\Models\Post::all()->random();
         $comment = \App\Models\Comment::all()->where('commentable_id', $post->id)
             ->where('parent_id', NULL)
