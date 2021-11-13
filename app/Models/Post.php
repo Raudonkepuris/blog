@@ -20,6 +20,11 @@ class Post extends Model
     }
 
     public function comments(){
-        return $this->morphMany(Comment::class, 'commentable');
+        return $this->morphMany(Comment::class, 'commentable')->where('parent_id', NULL);
+    }
+
+    public function replies()
+    {
+        return $this->morphMany(Comment::class, 'commentable')->whereNotNull('parent_id');
     }
 }
