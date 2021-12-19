@@ -162,7 +162,7 @@
             </div>
             @endforeach
             <div class="row justify-content-center">
-                {{ $comments->links('vendor.pagination.livewire') }}
+                {{ $comments->links('vendor.pagination.bootstrap-4-livewire') }}
             </div>
         </div>
     </div>
