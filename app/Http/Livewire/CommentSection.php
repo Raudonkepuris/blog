@@ -22,7 +22,7 @@ class CommentSection extends Component
 
     public function paginationView()
     {
-        return 'vendor.pagination.livewire';
+        return 'vendor.pagination.dark-paginator-livewire';
     }
 
     protected $rules = [
