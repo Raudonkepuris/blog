@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Models\Post;
 use App\Http\Controllers\PostController;
-use App\Http\Controllers\CommentController;
+use App\Http\Controllers\PostImageController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -16,12 +16,11 @@ use App\Http\Controllers\CommentController;
 */
 
 Route::get('/', function () {
-    $post = Post::all()->random();
-    return view('index', compact('post'));
+    return view('index');
 })->name('home');
 
 Route::resource('posts', PostController::class);
 Route::get('posts', [PostController::class, 'index'])->name('posts.index');
-Route::resource('comments', CommentController::class);
+Route::post('/upload', [PostImageController::class, 'upload'])->name('upload');
 
 Auth::routes(['register'=>false]);
