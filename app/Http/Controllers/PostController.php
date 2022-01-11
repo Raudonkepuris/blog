@@ -74,9 +74,8 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Post $post)
     {
-        $post = Post::find($id);
         $comments = $post->comments->sortByDesc('created_at');
 
         return view('posts.post', compact('post', 'comments'));
@@ -88,11 +87,12 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Post $post)
     {
-        $this->authorize('update', Post::find($id));
+        $this->authorize('update', $post);
+        $tags = Tag::all();
 
-        return view('posts.edit');
+        return view('posts.edit', compact('post', 'tags'));
     }
 
     /**
@@ -102,9 +102,25 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Post $post)
     {
-        $this->authorize('update', Post::find($id));
+        $this->authorize('update', $post);
+
+        // if($request->file('photo') != NULL){
+        //     $path = $request->file('photo')->store('blog-photos', 'public');
+        //     $post->photo = $path;
+        // }
+
+        $post->update([
+            'title'=>$request->title,
+            'content'=>$request->content,
+        ]);
+
+        $post->tags()->sync($request->tags, true);
+
+        $request->session()->flash('updated', 'Post has been updated successfully');
+
+        return $this->show($post);
     }
 
     /**
