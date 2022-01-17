@@ -6,13 +6,13 @@
 <div class="row justify-content-center">
     <div class="col-2 p-0"></div>
 
-    <div class="col-8" id="center">
+    <div class="col-8 center">
         <div class="row">
             <img src="{{ asset("assets/pepe_band.gif") }}" alt="Pepe band" class="w-100">
         </div>
 
         <div class="row">
-            <h1 class="text-goldenrod text-center">Welcome!</h1>
+            <h1 id="welcome" class="text-goldenrod text-center">Welcome!</h1>
         </div>
 
         <div class="row" id="abt-website">
@@ -30,9 +30,9 @@
             </ul>
         </div>
 
-        <div class="row">
+        <div class="row align-content-center">
             <div class="col chad">
-                <a href="https://landchad.net/" target="_blank"><img src="{{ asset("assets/landchad.gif") }}" alt="landchad.net" class="chad"></a>
+                <a href="https://landchad.net/" target="_blank"><img src="{{ asset("assets/landchad.gif") }}" alt="landchad.net"></a>
             </div>
         </div>
     </div>

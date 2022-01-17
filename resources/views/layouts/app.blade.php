@@ -19,23 +19,51 @@
     
 </head>
 
-@yield('style')
-
 <body>
-
     <div class="container-fluid">
 
         <div class="row justify-content-center">
 
-            <div class="col">
-                <div class="row justify-content-center">
-                    <ul class="nav justify-content-center">
-                        <li class="nav-item">
-                            <a class="nav-link active" href="{{ route('home') }}">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('posts.index') }}">Blog</a>
-                        </li>
+            <nav class="navbar navbar-expand-lg navbar-light">
+                <div class="container-fluid">
+                  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav mx-auto me-auto mb-2 mb-lg-0">
+                      <li class="nav-item">
+                        <a class="nav-link {{ Route::currentRouteNamed('home') ? 'active' : '' }}" aria-current="page" href="{{ route('home') }}">Home</a>
+                      </li>
+                      <li class="nav-item">
+                        <a class="nav-link {{ Route::currentRouteNamed('posts.index') ? 'active' : '' }}" href="{{ route('posts.index') }}">Blog</a>
+                      </li>
+
+                      @guest
+                      @if (Route::has('login'))
+                      <li class="nav-item">
+                        <a class="nav-link {{ Route::currentRouteNamed('login') ? 'active' : '' }}" href="{{ route('login') }}">{{ __('Login') }}</a>
+                      </li>
+                      @endif
+                      @endguest
+
+                      @auth
+                      <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                          More actions
+                        </a>
+                        @can('modify', \App\Models\Tag::class)
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                          <li><a class="dropdown-item" href="{{ route('dashboard') }}">Dashboard</a></li>
+                        </ul>
+                        @endcan
+                      </li>
+                      @endauth
+                      
+                      
+
+                    </ul>
+                  </div>
+                </div>
+              </nav>
+
+            {{-- <div class="col">
                         @guest
                         @if (Route::has('login'))
                         <li class="nav-item">
@@ -73,14 +101,14 @@
                               <li><a class="dropdown-item" href="#">Something else here</a></li>
                             </ul>
                           </li>
-                    </ul>
+                        </ul>
+                        </div>
                 </div>
-            </div>
-
+            </div> --}}
         </div>
 
         @yield('content')
-    </div>
+</div>
 
 
     @yield('livewireScripts')

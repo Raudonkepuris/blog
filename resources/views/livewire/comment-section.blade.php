@@ -5,17 +5,19 @@
                 <p>Post your comment</p>
             </div>
 
+            
+            @if ($errors->any())
             <div class="row">
-                @if ($errors->any())
-                <div class="col alert alert-danger">
+                <div class="alert alert-danger">
                     <ul class="m-0">
                         @foreach ($errors->all() as $error)
                         <li>{{ $error }}</li>
                         @endforeach
                     </ul>
                 </div>
-                @endif
             </div>
+            @endif
+            
 
             <div class="row">
                 @if (session()->has('message'))
@@ -31,15 +33,17 @@
             
 
             <div class="row">
-                <form wire:submit.prevent="submit" style="width: 100%">
-                    <div class="form-group">
+                <form class="p-0" wire:submit.prevent="submit" style="width: 100%">
+                    <div class="form-group mb-1">
                         <input wire:model="name" type="text" class="form-control" placeholder="Name (Anonymous)">
                     </div>
-                    <div class="form-group">
+                    <div class="form-group mb-1">
                         <textarea wire:model.lazy="content" type="text" class="form-control"
                             placeholder="Comment"></textarea>
                     </div>
-                    <input type="submit" class="btn btn-primary" value="Comment">
+                    <div class="form-group mb-3">
+                        <input type="submit" class="btn btn-primary" value="Comment">
+                    </div>
                 </form>
             </div>
 
@@ -49,33 +53,42 @@
                     <div class="row border p-1">
                         <div class="col">
                             <div class="row justify-content-between">
-                                <div class="col p-0">
+
+                                <div class="col-md-auto p-0">
                                     <b>{{ $comment->name }}</b>
-                                    @if (in_array($comment->id, $this->hidden_ids) == true ? 'd-none' : '' )
+                                    {{-- @if (in_array($comment->id, $this->hidden_ids) == true ? 'd-none' : '' )
                                     {{ $comment->id }}
-                                    @endif
-                                </div>
-                                <div class="col p-0 text-align-end">
-                                    <p class="text-right">Posted {{ $comment->updated_at->diffforhumans() }}</p>
+                                    @endif --}}
                                 </div>
 
+                                <div class="col-md-auto p-0 text-align-end">
+                                    <p>Posted {{ $comment->updated_at->diffforhumans() }}</p>
+                                </div>
+
                             </div>
+
                             <div class="row">
-                                <p>{{ $comment->content }}</p>
+                                <div class="col">
+                                    <p>{{ $comment->content }}</p>
+                                </div>
                             </div>
+
                             <div class="row">
 
-                                <button type="button" wire:click="openReplyField({{ $comment->id }})"
-                                    class="btn btn-link p-0 mx-2">Reply</button>
-
-                                @if (session('comments') != NULL || Gate::allows('delete_comments'))
-                                @if (Gate::allows('delete_comments') || in_array($comment->id, session('comments')))
-                                    <button type="button" wire:click="deleteId({{ $comment->id }})" 
-                                        class="btn btn-link text-danger" data-toggle="modal" data-target="#commentModal">Delete</button>
-                                @endif
-                                @endif
-
+                                <div class="col">
+                                    <button type="button" wire:click="openReplyField({{ $comment->id }})"
+                                        class="btn btn-link p-0 me-2">Reply</button>
+                                        
+                                        @if (session('comments') != NULL || Gate::allows('delete_comments'))
+                                        @if (Gate::allows('delete_comments') || in_array($comment->id, session('comments')))
+                                        <button type="button" wire:click="deleteId({{ $comment->id }})" 
+                                            class="btn btn-link text-danger p-0 m-0" data-toggle="modal" data-target="#commentModal">Delete</button>
+                                        @endif
+                                        @endif
+                                </div>
+                                            
                             </div>
+
                         </div>
                     </div>
                     @if ($reply_ids != NULL)
@@ -125,26 +138,31 @@
                                 <div class="col">
                                     <div class="row justify-content-between">
 
-                                        <div class="col p-0">
+                                        <div class="col-md-auto p-0">
                                             <b>{{ $reply->name }}</b>
                                         </div>
-                                        <div class="col p-0 text-align-end">
-                                            <p class="text-right">Posted {{ $reply->updated_at->diffforhumans() }}
+
+                                        <div class="col-md-auto p-0 text-align-end">
+                                            <p>Posted {{ $reply->updated_at->diffforhumans() }}
                                             </p>
                                         </div>
 
                                     </div>
                                     <div class="row">
-                                        <p>{{ $reply->content }}</p>
+                                        <div class="col">
+                                            <p>{{ $reply->content }}</p>
+                                        </div>
                                     </div>
                                     <div class="row">
-                                        @if (session('comments') != NULL || Gate::allows('delete_comments'))
-                                        @if (Gate::allows('delete_comments') || in_array($reply->id,
+                                        <div class="col">
+                                            @if (session('comments') != NULL || Gate::allows('delete_comments'))
+                                            @if (Gate::allows('delete_comments') || in_array($reply->id,
                                         session('comments')))
-                                            <button type="button" wire:click="deleteId({{ $reply->id }})" 
-                                             class="btn btn-link text-danger" data-toggle="modal" data-target="#commentModal">Delete</button>
-                                        @endif
-                                        @endif
+                                            <button id="delete-btn" type="button" wire:click="deleteId({{ $reply->id }})" 
+                                                class="btn btn-link text-danger p-0 m-0" data-toggle="modal" data-target="#commentModal">Delete</button>
+                                                @endif
+                                                @endif
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -167,7 +185,25 @@
         </div>
     </div>
 
-    <div wire:ignore.self class="modal fade" id="commentModal" tabindex="-1" role="dialog" aria-labelledby="commentModalLabel" aria-hidden="true">
+    <div class="modal fade" id="commentModal" tabindex="-1">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              ...
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+          </div>
+        </div>
+      </div>    
+
+    {{-- <div class="modal fade" id="commentModal" tabindex="-1" role="dialog" aria-labelledby="commentModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -187,6 +223,14 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> --}}
+
+    <script>
+            var myModal = document.getElementById('commentModal')
+
+            myModal.addEventListener('shown.bs.modal', function () {
+            myInput.focus()
+            })
+    </script>
 
 </div>
