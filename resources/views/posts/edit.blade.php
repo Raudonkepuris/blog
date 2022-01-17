@@ -54,7 +54,7 @@
             <div class="row mb-3">
                 <div class="col">
                     <label class="form-label">Photo</label>
-                    <input accept=".png,.jpg,.gif" type="file" name="photo" class="form-control" value="{{ $image != NULL ? asset("storage/$image->path") : '' }}">
+                    <input accept=".png,.jpg,.gif" type="file" name="photo" class="form-control">
                 </div>
             </div>
 

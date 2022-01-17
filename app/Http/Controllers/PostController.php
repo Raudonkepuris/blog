@@ -138,10 +138,22 @@ class PostController extends Controller
     {
         $this->authorize('update', $post);
 
-        // if($request->file('photo') != NULL){
-        //     $path = $request->file('photo')->store('blog-photos', 'public');
-        //     $post->photo = $path;
-        // }
+        if($request->file('photo') != NULL){
+            $image = $post->getImage();
+            if($image != NULL){
+                $name = explode("/", $image->path);
+                $name = $name[1];
+                $path = $request->file('photo')->storeAs('blog-photos', $name, 'public');
+            }
+            else{
+                $path = $request->file('photo')->store('blog-photos', 'public');
+
+                $post->image()->create([
+                    'path' => $path
+                ]);
+            }
+
+        }
 
         $post->update([
             'title'=>$request->title,
