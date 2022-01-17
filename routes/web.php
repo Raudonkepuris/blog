@@ -19,8 +19,16 @@ Route::get('/', function () {
     return view('index');
 })->name('home');
 
+Route::middleware('auth')->group(function () {
+    Route::get('/dashboard', function () {
+        return view('dashboard.index');
+    })->name('dashboard');
+});
+
 Route::resource('posts', PostController::class);
 Route::get('posts', [PostController::class, 'index'])->name('posts.index');
 Route::post('/upload', [PostImageController::class, 'upload'])->name('upload');
+
+
 
 Auth::routes(['register'=>false]);
