@@ -57,6 +57,7 @@
                     <input accept=".png,.jpg,.gif" type="file" name="photo" class="form-control" value="{{ $image != NULL ? asset("storage/$image->path") : '' }}">
                 </div>
             </div>
+
             @if($image != NULL)           
             <div class="row mb-3">
                 <label class="form-label">Current photo (click to expand)</label>
@@ -79,11 +80,13 @@
     </div>
 </div>
 
+@if($image != NULL)
 <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imgModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <img class="img-fluid" src="{{ asset("storage/$image->path") }}"/>
     </div>
 </div>
+@endif
 
 <script>
     function image_upload_handler (blobInfo, success, failure, progress) {
