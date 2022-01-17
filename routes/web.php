@@ -4,6 +4,9 @@ use Illuminate\Support\Facades\Route;
 use App\Models\Post;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\PostImageController;
+use App\Http\Controllers\TagController;
+use App\Models\Tag;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -20,9 +23,15 @@ Route::get('/', function () {
 })->name('home');
 
 Route::middleware('auth')->group(function () {
+
     Route::get('/dashboard', function () {
         return view('dashboard.index');
-    })->name('dashboard');
+    })->name('dashboard')->middleware('can:open_dashboard');
+
+    Route::get('/dashboard/tags/index', [TagController::class, 'index'])->name('tags.index');
+    Route::get('/dashboard/tag/{tag}/edit', [TagController::class, 'edit'])->name('tags.edit');
+    Route::post('/tags/{tag}', [TagController::class, 'update'])->name('tags.update');
+
 });
 
 Route::resource('posts', PostController::class);
