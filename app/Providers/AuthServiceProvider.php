@@ -16,6 +16,7 @@ class AuthServiceProvider extends ServiceProvider
      */
     protected $policies = [
         'App\Models\Post' => 'App\Policies\PostPolicy',
+        'App\Models\Tag' => 'App\Policies\TagPolicy',
     ];
 
     /**
@@ -30,5 +31,7 @@ class AuthServiceProvider extends ServiceProvider
         Gate::define('create_users', fn(User $user) => $user->roles->contains(1));
 
         Gate::define('delete_comments', fn(User $user) => $user->roles->contains(1));
+
+        Gate::define('open_dashboard', fn(User $user) => $user->roles->contains(1));
     }
 }
