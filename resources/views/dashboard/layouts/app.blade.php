@@ -15,7 +15,32 @@
 </head>
 <body id="dashboard">
     <div class="container-fluid">      
-        @yield('content')
+        <div class="row justify-content-center m-2">
+            <h4>Dasboard</h4>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-2">
+                    @can('viewAny', "App\\Models\Tag")
+                    <ul class="nav flex-column">
+                        <li class="nav-item"><a class="nav-link" href="{{ route('tags.index') }}">Tags</a></li>
+                    </ul>
+                    @endcan
+                </div>
+                <div class="col-8">
+                    @yield('content')
+                </div>
+                <div class="col-2"></div>
+            </div>
     </div>
 </body>
+<script>
+    function toggleTagOptions() {
+      var x = document.getElementById("tag-options");
+      if (x.style.display === "none") {
+        x.style.display = "block";
+      } else {
+        x.style.display = "none";
+      }
+    }
+  </script>
 </html>
