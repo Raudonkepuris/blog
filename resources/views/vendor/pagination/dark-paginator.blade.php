@@ -1,7 +1,7 @@
-<link rel="stylesheet" href="{{ asset('css/dark-paginator.css') }}">
+<link rel="stylesheet" href="{{ asset('css/light-paginator.css') }}">
 
 @if ($paginator->hasPages())
-    <ul class="pagination">
+    <ul class="pagination justify-content-center">
             @if ($paginator->onFirstPage())
             <li><a class="disabled" href="">&lsaquo;</a></li>
             @else
