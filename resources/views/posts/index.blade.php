@@ -1,63 +1,10 @@
 @extends('layouts.app')
 @section('title', 'Posts')
 
-@section('style')
-<style>
-    #post-sep {
-        border-bottom: 2px solid #ddd;
-    }
-
-    .post {
-        padding: 10px 0px;
-    }
-
-
-    .col {
-        color: #ddd;
-    }
-
-    .title {
-        color: goldenrod;
-    }
-
-    .tags {
-        border-radius: 10px;
-        background-color: #333;
-        /* font-size: 1.1em; */
-        color: lightblue;
-    }
-
-    .tags .row {
-        margin: 5px;
-    }
-
-    .tags .row p {
-        margin-top: 10px;
-        font-size: 1.1em;
-    }
-
-    .button {
-        padding: 10px;
-        color: #ddd;
-        background-color: #333;
-        border: #ddd 2px solid;
-        border-radius: 10px;
-        text-decoration: none;
-    }
-
-    .button:hover {
-        text-decoration: none;
-        color: lightblue;
-        border-color: lightblue;
-        background-color: #111;
-    }
-
-</style>
-@endsection
-
 @section('content')
 
-<div class="row justify-content-center" id="main">
+<div id="posts-page" class="row justify-content-center">
+
     <div class="col-2 p-0">
         <div class="row">
             <div class="col-3"></div>
@@ -75,88 +22,96 @@
                             <label for="{{ $tag->name }}">{{ $tag->name }}</label>
                         </div>
                         @endforeach
-                        {{-- <input class="btn btn-primary" type="submit" value="Submit"> --}}
                     </form>
                 </div>
             </div>
             <div class="col-3"></div>
         </div>
     </div>
-    <div class="col-8" id="center">
 
+    <div class="col-8 center">
+
+        @can('create', 'App\\Models\Post')
         <div class="row">
-            @can('create', 'App\\Models\Post')
-            <a href="{{ route('posts.create') }}" type="button" class="btn btn-primary">Create new post</a>
-            @endcan
+            <div class="col">
+                <a href="{{ route('posts.create') }}" type="button" class="btn btn-primary">Create new post</a> 
+            </div>
         </div>
+        @endcan
 
         @if (session()->has('postDeletion'))
-        <div class="alert alert-success">
+        <div class="row alert alert-success">
             {{ session('postDeletion') }}
         </div>
         @endif
 
-
-        <div class="row justify-content-center">
-            {{ $posts->links() }}
+        <div class="row mt-2">
+            <div class="col text-center">
+                {{ $posts->links() }}
+            </div>
         </div>
 
         @foreach ($posts as $post)
-        <a href="{{ route("posts.show", $post->id) }}" style="text-decoration: none;">
-            <div class="row post" id="{{ $loop->last ? "" : "post-sep" }}">
-
-                <div class="col">
-                    <div class="row">
-                        <div class="col title">
-                            <h4>{{ $post->title }}</h4>
-                        </div>
-                        <div class="col text-right">
-                            {{ \Carbon\Carbon::parse($post->created_at)->diffForHumans() }}
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col">
-                            {{ $post->upvotes }} likes,
-                            {{ $post->downvotes }} downvotes
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col">
-                            {{ $posts->where('id', $post->id)->first()->comments->count() }} comments
-                        </div>
-                    </div>
+        <div class="row mx-3 mb-3" id="post-wrapper">
+            <a href="{{ route("posts.show", $post->id) }}">
+                <div class="row post" id="{{ $loop->last ? "" : "post-sep" }}">
 
                     @php
-                        $tags = $posts->where('id', $post->id)->first()->tags;
-                        $tag_cnt = $tags->count();
+                    $image = $post->getImage()
                     @endphp
-                    @if($tag_cnt > 0)
-                    <div class="row">
-                        <div class="col">
-                            <span>Tags:
-                                @for ($i = 0; $i < $tag_cnt; $i++) 
-                                    @if ($tag_cnt - $i==1)
-                                    {{  sprintf('%s', $tags->offsetGet($i)->name)  }} 
-                                    @else
-                                    {{  sprintf('%s, ', $tags->offsetGet($i)->name)  }} 
+
+                    <div class="col">
+                        <div class="row my-2">
+                            @if ($image != NULL)
+                            <div class="col-2 p-0 me-2">
+                                <img class="img-fluid" src="{{ asset("storage/$image->path") }}">
+                            </div>
+                            @endif
+                            <div class="col">
+                                <div class="row">
+                                    <h4 class="m-0 p-0">{{ $post->title }}</h4>
+                                </div>
+                                <div class="row">
+                                    {{ $post->upvotes }} likes,
+                                    {{ $post->downvotes }} downvotes
+                                </div>
+                                <div class="row">
+                                    {{ $posts->where('id', $post->id)->first()->comments->count() }} comments
+                                </div>
+                                <div class="row">
+                                    @php
+                                    $tags = $posts->where('id', $post->id)->first()->tags;
+                                    $tag_cnt = $tags->count();
+                                    @endphp
+                                    @if($tag_cnt > 0)
+                                    <span class="p-0 m-0">Tags:
+                                        @for ($i = 0; $i < $tag_cnt; $i++) 
+                                            @if ($tag_cnt - $i==1)
+                                            {{  sprintf('%s', $tags->offsetGet($i)->name)  }} 
+                                            @else
+                                            {{  sprintf('%s, ', $tags->offsetGet($i)->name)  }} 
+                                            @endif 
+                                        @endfor
+                                    </span> 
                                     @endif
-                                @endfor 
-                            </span> 
-                        </div>
+                                </div> 
+                            </div> 
+                            <div class="col">
+                                <div class="row text-end">
+                                    <p>{{ \Carbon\Carbon::parse($post->created_at)->diffForHumans() }}</p>
+                                </div>
+                            </div>
+                        </div> 
                     </div> 
-                    @endif
-
-                </div>
-            </div>
-        </a>
-        @endforeach
-
+                </div> 
+            </a> 
+        </div> 
+        @endforeach 
         <div class="row justify-content-center">
             {{ $posts->links() }}
         </div>
-
     </div>
-    <div class="col-2 p-0"></div>
-</div>
 
+<div class="col-2 p-0"></div>
+</div>
 @endsection

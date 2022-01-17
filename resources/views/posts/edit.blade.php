@@ -10,10 +10,12 @@
 
 @section('content')
 
-<div class="row justify-content-center">
-    <div class="col-8" id="center">
+<div class="row justify-content-center post-workshop">
+    <div class="col-8 center">
         <div class="row mb-3">
+            <div class="col">
             <a href="{{ url()->previous() }}" class="btn btn-primary">Back</a>
+            </div>
         </div>
 
         <form action="{{ route('posts.update', $post) }}" METHOD="POST" enctype="multipart/form-data">
@@ -21,30 +23,65 @@
             @csrf
             
             <div class="row mb-3">
-                <label class="form-label">Title</label>
-                <input class="w-100 form-control" value="{{ $post->title}}" type="text" name="title">
+                <div class="col">
+                    <label class="form-label">Title</label>
+                    <input class="w-100 form-control title" value="{{ $post->title}}" type="text" name="title">
+                </div>
             </div>
 
             <div class="row mb-3">
-                <label class="form-label">Content</label>
-                <textarea class="w-100" name="content" id="content-editor">{{ $post->content }}</textarea>
+                <div class="col">
+                    <label class="form-label">Content</label>
+                    <textarea class="w-100" name="content" id="content-editor">{{ $post->content }}</textarea>
+                </div>
             </div>
 
             <div class="row mb-3">
-                <label class="form-label">Tags</label>
-                <select class="w-100" id="tag-select" name="tags[]" multiple="multiple">
-                    @foreach ($tags as $tag)
+                <div class="col">
+                    <label class="form-label">Tags</label>
+                    <select class="w-100" id="tag-select" name="tags[]" multiple="multiple">
+                        @foreach ($tags as $tag)
                         <option value="{{ $tag->id }}">{{ $tag->name }}</option>
-                    @endforeach
-                </select>
+                        @endforeach
+                    </select>
+                </div>
             </div>
 
-            <div class="row w-100  mb-2">
-                <input type="submit" value="Update" class="btn btn-success">
+            @php
+                $image = $post->getImage()
+            @endphp
+
+            <div class="row mb-3">
+                <div class="col">
+                    <label class="form-label">Photo</label>
+                    <input accept=".png,.jpg,.gif" type="file" name="photo" class="form-control" value="{{ $image != NULL ? asset("storage/$image->path") : '' }}">
+                </div>
+            </div>
+            @if($image != NULL)           
+            <div class="row mb-3">
+                <label class="form-label">Current photo (click to expand)</label>
+                <div class="col-1">
+                    <button class="btn m-0 p-0" id="img-btn" data-bs-toggle="modal" data-bs-target="#imageModal">
+                        <img class="img-fluid" src="{{ asset("storage/$image->path") }}"/>
+                    </button>
+                </div>
+            </div>
+            @endif
+
+            <div class="row w-100 mt-3">
+                <div class="col">
+                    <input type="submit" value="Update" class="btn btn-success">
+                </div>
             </div>
 
         </form>
         
+    </div>
+</div>
+
+<div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imgModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <img class="img-fluid" src="{{ asset("storage/$image->path") }}"/>
     </div>
 </div>
 
@@ -113,6 +150,22 @@
         $('#tag-select').val({{ json_encode($post->tags()->allRelatedIds()) }});
         $('#tag-select').trigger('change');
     });
+
+    $('#img-btn').on('click', function(e) {
+        // Prevent the default action of the clicked item. In this case that is submit
+        e.preventDefault();
+
+        var myModal = document.getElementById('imageModal')
+
+        myModal.addEventListener('shown.bs.modal', function () {
+        myInput.focus()
+        })
+
+        
+        // Make sure the button is not submitted after all!
+        return false;
+    });
+
 </script>
 
 @endsection

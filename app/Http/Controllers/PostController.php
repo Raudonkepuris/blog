@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Post;
 use App\Models\Tag;
+use App\Models\Image;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 
@@ -37,8 +38,8 @@ class PostController extends Controller
             $query->whereHas('tags', function(Builder $query) use($request) {
                           $query->whereIn('tags.name', $request->tags);
                       });
-        })->paginate(10);
-
+        })->orderBy('id', 'desc')->paginate(10);
+        
         return view('posts.index', [
             'tags' => $tags,
             'posts' => $posts
@@ -53,8 +54,9 @@ class PostController extends Controller
     public function create()
     {
         $this->authorize('create', Post::class);
+        $tags = Tag::all();
 
-        return view('posts.create');
+        return view('posts.create', compact('tags'));
     }
 
     /**
@@ -66,6 +68,28 @@ class PostController extends Controller
     public function store(Request $request)
     {
         $this->authorize('create', Post::class);
+
+        $post = new Post;
+
+        $post->title = $request->title;
+        $post->content = $request->content;
+        $post->upvotes = 0;
+        $post->downvotes = 0;
+
+        $post->save();
+
+        $post->tags()->sync($request->tags, false);
+
+        if($request->file('photo') != NULL){
+            $path = $request->file('photo')->store('blog-photos', 'public');
+
+            $post->image()->create([
+                'path' => $path
+            ]);
+        }
+
+
+        return $this->show($post);
     }
 
     /**
@@ -78,7 +102,15 @@ class PostController extends Controller
     {
         $comments = $post->comments->sortByDesc('created_at');
 
-        return view('posts.post', compact('post', 'comments'));
+        $image = Image::whereHasMorph(
+            'imageable',
+            Post::class,
+            function (Builder $query) use($post) {
+                $query->where('imageable_id', $post->id);
+            }
+        )->first();
+
+        return view('posts.post', compact('post', 'comments', 'image'));
     }
 
     /**
