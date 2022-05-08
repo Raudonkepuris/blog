@@ -48,11 +48,14 @@
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                           More actions
                         </a>
+
                         @can('modify', \App\Models\Tag::class)
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                           <li><a class="dropdown-item" href="{{ route('dashboard') }}">Dashboard</a></li>
+                          <li><a class="dropdown-item" href="{{ route('logout') }}">Logout</a></li>
                         </ul>
                         @endcan
+
                       </li>
                       @endauth
                       
