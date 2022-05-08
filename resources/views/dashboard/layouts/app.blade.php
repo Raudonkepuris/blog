@@ -16,15 +16,31 @@
 <body id="dashboard">
     <div class="container-fluid">      
         <div class="row justify-content-center m-2">
-            <h4>Dasboard</h4>
+            <a href="{{ route('dashboard') }}" class="dashboard-link"><h4>Dashboard</h4></a>
             </div>
             <div class="row justify-content-center">
                 <div class="col-2">
+                    <ul class="nav flex-column">
+                        <li class="nav-item"><a class="nav-link" href="{{ route('home') }}">Back to blog</a></li>
+                    </ul>
                     @can('viewAny', "App\\Models\Tag")
                     <ul class="nav flex-column">
                         <li class="nav-item"><a class="nav-link" href="{{ route('tags.index') }}">Tags</a></li>
                     </ul>
                     @endcan
+                    @can('viewAny', "App\\Models\User")
+                    <ul class="nav flex-column">
+                        <li class="nav-item"><a class="nav-link" href="{{ route('users.index') }}">Users</a></li>
+                    </ul>
+                    @endcan
+                    @can('viewAny', "App\\Models\User")
+                    <ul class="nav flex-column">
+                        <li class="nav-item"><a class="nav-link" href="{{ route('user_settings.index') }}">User settings</a></li>
+                    </ul>
+                    @endcan
+                    <ul class="nav flex-column">
+                        <li class="nav-item"><a class="nav-link" href="{{ route('logout') }}">Logout</a></li>
+                    </ul>
                 </div>
                 <div class="col-8">
                     @yield('content')
