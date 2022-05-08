@@ -138,6 +138,20 @@ $line-height-base: 1.6;
 
 #dashboard{
     background-color: blanchedalmond;
+
+    .dashboard-link{
+        text-decoration: none;
+        color: black;
+    }
+
+    .dashboard-link:hover{
+        text-decoration: none;
+        color: black;
+    }
+
+    .dashboard-link-modify{
+        text-align: left;
+    }
 }
 
 $input-bg: white;
