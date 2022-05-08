@@ -27,7 +27,8 @@ class TagController extends Controller
      */
     public function create()
     {
-        //
+        $this->authorize('viewAny', Tag::class);
+        return view('dashboard.tags.create');
     }
 
     /**
@@ -38,7 +39,16 @@ class TagController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $this->authorize('viewAny', Tag::class);
+
+        $tag = new Tag;
+
+        $tag->name = $request->name;
+        $tag->display = $request->display == 'on' ? 1 : 0;
+
+        $tag->save();
+
+        return back()->with('success', 'Tag created successfully.');
     }
 
     /**
@@ -97,8 +107,10 @@ class TagController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Tag $tag)
     {
-        //
+        $tag->posts()->detach();
+        $tag->delete();
+        return redirect()->back()->with('success', 'Tag deleted successfully.');
     }
 }
