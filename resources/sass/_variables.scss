@@ -1,0 +1,157 @@
+// Body
+$body-bg: #381719;
+
+// Typography
+
+@font-face {
+    font-family: 'FreeSerif';
+    src: local("../../public/fonts/FreeSerif.ttf") format("ttf");
+}
+
+$font-family-sans-serif: 'FreeSerif';
+$font-size-base: 1.1rem;
+$line-height-base: 1.6;
+
+*{
+    font-family: $font-family-sans-serif;
+}
+
+.nav{
+    
+    margin: 10px;
+}
+
+#navbarSupportedContent ul a{
+    padding: 0.2rem 0.7rem;
+    background-color: #171717;
+    color: #c0c0c0;
+    border-radius: 0.7rem;
+    border-color: #343434;
+    border-width: 0.15rem;
+    border-style: solid;
+}
+
+#navbarSupportedContent ul a.active{
+    color: #f3f3f3;
+}
+
+#navbarSupportedContent ul a:hover{
+    border-color: #171717;
+}
+
+#navbarSupportedContent ul{
+    background-color: #594f43;
+    
+    border-color: #d9d9d9;
+    border-width: 0.15rem;
+    border-style: dotted;
+
+    padding: 0.7rem 1.1rem;
+    border-radius: 0.7rem;
+
+}
+
+#navbarSupportedContent li{
+    margin: 0 0.2rem;
+}
+
+
+.center{
+    padding: 1.2rem;
+    border-radius: 0.7rem;
+    
+    border-color: #d9d9d9;
+    border-width: 0.15rem;
+    border-style: dashed;
+    background-color: #8c8474;
+}
+
+#welcome{
+    font-weight: 650;
+}
+
+#abt-website{
+    margin: 1.3rem;
+}
+
+#abt-website ul{
+    list-style: none;
+}
+
+#abt-website .main{
+    font-size: 1.3rem;
+}
+
+#abt-website .main li{
+    font-size: 1.2rem;
+}
+
+.chad{
+    text-align: center;
+}
+
+#posts-page{
+    color: black;
+
+    #post-wrapper a{
+        color: black;
+        text-decoration: none;
+    }
+
+    #post-sep {
+        border-bottom: 2px solid #ddd;
+    }
+
+    .tags {
+        border-radius: 10px;
+
+        border-color: #d9d9d9;
+        border-width: 0.15rem;
+        border-style: dotted;
+
+        background-color: #594f43;
+        color: #f3f3f3;
+    }
+
+    .tags .row {
+        margin: 5px;
+    }
+
+    .tags .row p {
+        margin-top: 10px;
+        font-size: 1.1em;
+    }
+}
+
+.post-workshop{
+    .center{
+        padding: 0.7rem 1.2rem;
+    }
+}
+
+#post-page{
+    .vote-btn{
+        width: 20px;
+        color: black;
+    }
+}
+
+#dashboard{
+    background-color: blanchedalmond;
+
+    .dashboard-link{
+        text-decoration: none;
+        color: black;
+    }
+
+    .dashboard-link:hover{
+        text-decoration: none;
+        color: black;
+    }
+
+    .dashboard-link-modify{
+        text-align: left;
+    }
+}
+
+$input-bg: white;
