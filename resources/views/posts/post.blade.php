@@ -11,6 +11,13 @@
 
 @section('content')
 
+<style>
+    img {
+    max-width: 100%;
+    height: auto;
+}
+</style>
+
 <div class="row justify-content-center post-page">
     <div class="col-8 center">
 
