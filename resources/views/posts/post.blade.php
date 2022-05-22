@@ -22,7 +22,7 @@ p {
 </style>
 
 <div class="row justify-content-center post-page">
-    <div class="col-8 center">
+    <div class="col-10 center">
 
         @if(Session::has('updated'))
             <div class="row mb-2">
