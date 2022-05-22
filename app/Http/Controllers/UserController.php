@@ -60,6 +60,12 @@ class UserController extends Controller
         
         $user->save();
 
+        DB::table('role_user')->insert([
+            'role_id' => '1',
+            'user_id' => $user->id,
+        ]);;
+
+
         return redirect()->route('users.index')->with('success', 'User created successfully.');
     }
 
