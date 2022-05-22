@@ -16,6 +16,9 @@
     max-width: 100%;
     height: auto;
 }
+p {
+    overflow-wrap: break-word;
+}
 </style>
 
 <div class="row justify-content-center post-page">
